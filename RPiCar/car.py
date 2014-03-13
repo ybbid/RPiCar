@@ -6,17 +6,20 @@ import math
 PWM_HZ = 2000
 
 class Wheel(object) :
-    def __init__(self, fNo, bNo, revise = 0):
-        self.fNo = fNo
-        self.bNo = bNo
-        self.revise = revise
+    def __init__(self, fPin, bPin):
+        self.fPin = fPin
+        self.bPin = bPin
+        self.revise = 0
 
-        gp.setup(self.fNo, gp.OUT)
-        gp.setup(self.bNo, gp.OUT)
-        self.fp = gp.PWM(self.fNo, PWM_HZ)
-        self.bp = gp.PWM(self.bNo, PWM_HZ)
+        gp.setup(self.fPin, gp.OUT)
+        gp.setup(self.bPin, gp.OUT)
+        self.fp = gp.PWM(self.fPin, PWM_HZ)
+        self.bp = gp.PWM(self.bPin, PWM_HZ)
         self.speed = 0
         self.isRun = 0
+
+    def setRevise(self, revise) :
+        self.revise = revise
 
     def run(self, speed) :
         if speed < 0 :
@@ -75,22 +78,25 @@ class Wheel(object) :
             self.bp.stop()
 
 class Car(object) :
-    def __init__(self, lfNo, lbNo, rfNo, rbNo) :
-        gp.setmode(gp.BOARD)
-        self.lWheel = Wheel(lfNo, lbNo, 0.1)
-        self.rWheel = Wheel(rfNo, rbNo)
-        self.timer = Timer(self.stop)
-        self.timer.start()
+    def __init__(self, gpMode = gp.BOARD) :
+        gp.setmode(gpMode)
 
     INSTANCE = None
     @staticmethod
     def getCar() :
         if Car.INSTANCE == None :
-            Car.INSTANCE = Car(11, 12, 13, 15)
+            Car.INSTANCE = Car()
+            Car.INSTANCE.initWhell(11, 12, 13, 15)
         return Car.INSTANCE
 
-    def run(self, rSpeed, lSpeed, duration = 0) :
-        print 'run : r =', rSpeed, 'l =', lSpeed
+    def initWhell(lfPin, lbPin, rfPin, rbPin) :
+        self.lWheel = Wheel(lfPin, lbPin)
+        self.lWhell.setRevise(0.1)
+        self.rWheel = Wheel(rfPin, rbPin)
+        self.timer = Timer(self.stop)
+        self.timer.start()
+
+    def run(self, lSpeed, rSpeed, duration = 0) :
         self.lWheel.run(lSpeed)
         self.rWheel.run(rSpeed)
         if duration != 0 :
@@ -115,7 +121,6 @@ class Car(object) :
             rSpeed = base * (-d - 135) / 45
         lSpeed = int(lSpeed)
         rSpeed = int(rSpeed)
-        print x, y, rSpeed, lSpeed
         self.run(lSpeed, rSpeed, duration)
 
     def stop(self) :
