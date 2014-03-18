@@ -80,13 +80,13 @@ class Wheel(object) :
 class Car(object) :
     def __init__(self, gpMode = gp.BOARD) :
         gp.setmode(gpMode)
+        self.initWhell = False
 
     INSTANCE = None
     @staticmethod
     def getCar() :
         if Car.INSTANCE == None :
             Car.INSTANCE = Car()
-            Car.INSTANCE.initWhell(11, 12, 13, 15)
         return Car.INSTANCE
 
     def initWhell(lfPin, lbPin, rfPin, rbPin) :
@@ -95,14 +95,19 @@ class Car(object) :
         self.rWheel = Wheel(rfPin, rbPin)
         self.timer = Timer(self.stop)
         self.timer.start()
+        self.initWhell = True
 
     def run(self, lSpeed, rSpeed, duration = 0) :
+        if not self.initWhell :
+            return
         self.lWheel.run(lSpeed)
         self.rWheel.run(rSpeed)
         if duration != 0 :
             self.timer.reset(duration / 1000)
 
     def run2(self, x, y, duration = 0) :
+        if not self.initWhell :
+            return
         base = math.sqrt(x*x + y*y)
         lSpeed = 0
         rSpeed = 0
@@ -124,6 +129,8 @@ class Car(object) :
         self.run(lSpeed, rSpeed, duration)
 
     def stop(self) :
+        if not self.initWhell :
+            return
         self.lWheel.stop()
         self.rWheel.stop()
 
