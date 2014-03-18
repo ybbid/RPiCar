@@ -1,7 +1,7 @@
 #coding:utf-8
 
 import RPi.GPIO as gp
-from timer import Timer
+#from timer import Timer
 import math
 PWM_HZ = 2000
 
@@ -72,9 +72,9 @@ class Wheel(object) :
         self.speed = speed
 
     def stop(self) :
-        if isRun == 1 :
+        if self.isRun == 1 :
             self.fp.stop()
-        elif isRun == -1 :
+        elif self.isRun == -1 :
             self.bp.stop()
 
 class Car(object) :
@@ -95,8 +95,8 @@ class Car(object) :
     def initWheel(self, lfPin, lbPin, rfPin, rbPin) :
         self.lWheel = Wheel(lfPin, lbPin)
         self.rWheel = Wheel(rfPin, rbPin)
-        self.timer = Timer(self.stop)
-        self.timer.start()
+#        self.timer = Timer(self.stop)
+#        self.timer.start()
         self.__initWheel = True
         print 'RPiCar initialized on pins[%s, %s, %s, %s]' % (lfPin, lbPin, rfPin, rbPin)
 
@@ -105,8 +105,8 @@ class Car(object) :
             return
         self.lWheel.run(lSpeed)
         self.rWheel.run(rSpeed)
-        if duration != 0 :
-            self.timer.reset(duration / 1000)
+#        if duration != 0 :
+#            self.timer.reset(duration / 1000)
 
     def run2(self, x, y, duration = 0) :
         if not self.__initWheel :
@@ -139,5 +139,5 @@ class Car(object) :
 
     def close(self) :
         self.stop()
-        self.timer.exit()
+#        self.timer.exit()
 
