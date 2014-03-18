@@ -80,7 +80,7 @@ class Wheel(object) :
 class Car(object) :
     def __init__(self, gpMode = gp.BOARD) :
         gp.setmode(gpMode)
-        self.__initWhell = False
+        self.__initWheel = False
 
     INSTANCE = None
     @staticmethod
@@ -89,18 +89,19 @@ class Car(object) :
             Car.INSTANCE = Car()
         return Car.INSTANCE
 
-    def isInitWhell(self) :
-        return self.__initWhell
+    def isInitWheel(self) :
+        return self.__initWheel
 
-    def initWhell(self, lfPin, lbPin, rfPin, rbPin) :
+    def initWheel(self, lfPin, lbPin, rfPin, rbPin) :
         self.lWheel = Wheel(lfPin, lbPin)
         self.rWheel = Wheel(rfPin, rbPin)
         self.timer = Timer(self.stop)
         self.timer.start()
-        self.__initWhell = True
+        self.__initWheel = True
+        print 'RPiCar initialized on pins[%s, %s, %s, %s]' % (lfPin, lbPin, rfPin, rbPin)
 
     def run(self, lSpeed, rSpeed, duration = 0) :
-        if not self.__initWhell :
+        if not self.__initWheel :
             return
         self.lWheel.run(lSpeed)
         self.rWheel.run(rSpeed)
@@ -108,7 +109,7 @@ class Car(object) :
             self.timer.reset(duration / 1000)
 
     def run2(self, x, y, duration = 0) :
-        if not self.__initWhell :
+        if not self.__initWheel :
             return
         base = math.sqrt(x*x + y*y)
         lSpeed = 0
@@ -131,7 +132,7 @@ class Car(object) :
         self.run(lSpeed, rSpeed, duration)
 
     def stop(self) :
-        if not self.__initWhell :
+        if not self.__initWheel :
             return
         self.lWheel.stop()
         self.rWheel.stop()
